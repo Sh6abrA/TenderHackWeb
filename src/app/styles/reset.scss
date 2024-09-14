@@ -1,10 +1,13 @@
+@import "themes/dark.scss";
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 body {
-    background-color: var();
+    background-color: var(--bg-color);
+    height: 100vh;
 }
 
 input,

@@ -1,0 +1,22 @@
+.DocumentViewer{
+    height: 100%;
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding:20 20px;
+
+}
+.previous{
+    background-color: var(--primary-color);
+}
+.current{
+    background-color: var(--secondary-color);
+}
+.document{
+    max-width: 100%;
+    height: 100%;
+    overflow: scroll;
+    background-color: var(--bg-color);
+}

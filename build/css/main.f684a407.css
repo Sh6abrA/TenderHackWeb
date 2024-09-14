@@ -1,0 +1,4 @@
+
+*{margin:0;padding:0;box-sizing:border-box}body{background-color:var()}input,button,textarea,select{margin:0;font:inherit}
+:root{--font-size-m: 16px;--font-size-l: 20px;--font-size-xl: 24px;--width-button: 350px;--height-button: 117px;--width-navbar: 250px;--height-navbar: 100vh;--width-header: 100%;--height-header: 80px}
+.app.dark{--bg-color: #181818;--primary-color: #008000;--secondary-color: #292929;--tertiary-color: #8D0088;--quaternary-color: #E63D43;--navbar-color: #1E1E1E}
