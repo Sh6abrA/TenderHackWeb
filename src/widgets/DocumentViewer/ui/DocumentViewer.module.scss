@@ -8,15 +8,27 @@
     padding:20 20px;
 
 }
-.previous{
-    background-color: var(--primary-color);
-}
-.current{
-    background-color: var(--secondary-color);
-}
+
 .document{
     max-width: 100%;
     height: 100%;
+    padding: 15px;
     overflow: scroll;
     background-color: var(--bg-color);
+    border: 3px solid var(--primary-color);
+    border-radius: 20px;
+}
+.instruments{
+    margin-top: 20px;
+}
+.button{
+    background-color: var(--danger-color);
+    margin: 0 10px;
+    border: none;
+    color: #fff;
+    padding: 13px 45px;
+}
+
+.save{
+    background-color: var(--primary-color);
 }

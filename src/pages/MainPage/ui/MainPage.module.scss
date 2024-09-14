@@ -7,3 +7,12 @@
     display: flex;
     align-items: center;
 }
+.vdd_added{
+    background-color: var(--secondary-color);
+    text-decoration: none;
+}
+.vdd_removed{
+    background-color: var(--danger-color);
+    text-decoration: none;
+
+}
