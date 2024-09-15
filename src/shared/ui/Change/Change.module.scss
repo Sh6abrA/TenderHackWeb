@@ -6,15 +6,30 @@
     border-radius: 10px;
     margin-bottom: 10px;
     transition: all 2s ease;
-    overflow: hidden; /* Скрыть переполнение */
-    max-height: 120px; /* Высота по умолчанию для 2 строк */
+    overflow: hidden;
+    /* Скрыть переполнение */
+    max-height: 120px;
+    /* Высота по умолчанию для 2 строк */
 
     &:hover {
         max-height: 200px;
-        .text{
-            -webkit-line-clamp: 4; /* Количество видимых строк */
+
+        .text {
+            -webkit-line-clamp: 4;
+            /* Количество видимых строк */
         }
     }
+}
+.info{
+    display: flex;
+    align-items: center;
+}
+.cancel {
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 24px;
+    margin-right: 10px;
+    color: var(--primary-color);
 }
 
 .type {
@@ -28,9 +43,11 @@
 .added {
     background-color: rgba(13, 155, 104, 0.2);
     text-decoration: none;
-    &:hover{
+
+    &:hover {
         border: 2px solid var(--secondary-color);
     }
+
     .type {
         background-color: var(--secondary-color);
     }
@@ -43,9 +60,11 @@
 .deleted {
     background-color: rgba(219, 43, 33, 0.2);
     text-decoration: none;
-    &:hover{
+
+    &:hover {
         border: 2px solid var(--secondary-color);
     }
+
     .type {
         background-color: var(--danger-color);
     }
@@ -61,9 +80,13 @@
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box; /* Включаем флексбокс для работы с линиями */
-    -webkit-box-orient: vertical; /* Задаем вертикальную ориентацию */
-    -webkit-line-clamp: 2; /* Количество видимых строк */
-    overflow: hidden; /* Обрезаем текст, который не помещается */
-    text-overflow: ellipsis; 
+    display: -webkit-box;
+    /* Включаем флексбокс для работы с линиями */
+    -webkit-box-orient: vertical;
+    /* Задаем вертикальную ориентацию */
+    -webkit-line-clamp: 2;
+    /* Количество видимых строк */
+    overflow: hidden;
+    /* Обрезаем текст, который не помещается */
+    text-overflow: ellipsis;
 }
