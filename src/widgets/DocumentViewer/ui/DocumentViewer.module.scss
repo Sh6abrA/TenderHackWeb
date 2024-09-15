@@ -21,6 +21,28 @@
 .instruments{
     margin-top: 20px;
 }
+.tooltip{
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    max-width: 400px;
+    max-height: 200px;
+    overflow: hidden;
+    input{
+        display: block;
+        padding: 10px;
+        border: none;
+        flex-grow: 1;
+        border-radius: 10px;
+        &:focus{
+            outline: none;
+        }
+    }
+}
+.sender{
+    display: flex;
+    align-items: center;
+}
+
 .button{
     background-color: var(--danger-color);
     margin: 0 10px;

@@ -4,7 +4,7 @@ import React, { FormEvent, forwardRef, RefObject, useEffect, useRef, useState } 
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import current from 'shared/assets/pdf/current.docx';
-
+import Send from 'shared/assets/icons/send.svg';
 export enum DocumentType {
     PREVIOUS = 'previous',
     CURRENT = 'current',
@@ -33,7 +33,7 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
     const [query, setQuery] = useState("");
     const [range, setRange] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
-    
+
     const mods: Record<string, boolean> = {
         [cls[type]]: true
     };
@@ -48,11 +48,12 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
     useEffect(() => {
         const fetchDocx = async () => {
             try {
-                setSearchParams({ 
-                    currentId: '9e0337d7-60cf-4f2f-adf5-30088f2517dc', 
+                setSearchParams({
+                    currentId: '9e0337d7-60cf-4f2f-adf5-30088f2517dc',
                     previousId: '2fa1d236-27f5-47c7-be3e-be199f702b01',
                     documentName: 'current.docx',
-                    userId: '12345'  });
+                    userId: '12345'
+                });
 
                 let response = await fetch("https://ada3e274-df6e-4a1b-baf6-4d7c15a24e2c.selstorage.ru/2fa1d236-27f5-47c7-be3e-be199f702b01.html");
                 let text = await response.text();
@@ -204,24 +205,30 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
                         <button onClick={saveHandle} className={classNames(cls.button, cls.save)}>Сохранить</button>
                     </>
                 ) : (
-                    <button onClick={() => { setIsEdit(true); setUnEditedHtmlContent(htmlContent) }} className={cls.button}>Редактировать</button>
+                    <>
+                        <button onClick={saveHandle} className={classNames(cls.button, cls.save)}>Отправить</button>
+                        <button onClick={() => { setIsEdit(true); setUnEditedHtmlContent(htmlContent) }} className={cls.button}>Редактировать</button>
+
+                    </>
                 )}
             </div>
             {(visible && selectedHtml) && (
                 <div
+                    className={cls.tooltip}
                     ref={containerRef}
                     style={{
                         position: 'absolute',
                         top: position.top,
                         left: position.left,
-                        backgroundColor: 'lightgray',
                         padding: '10px',
-                        border: '1px solid #000',
                         zIndex: 1000,
                     }}
                 >
-                    <input value={query} onChange={(e) => setQuery(e.target.value)} type="text" />
-                    <button onClick={sendEdit}>Send</button>
+                    <div className={cls.sender}>
+                        <input placeholder='Введите свой запрос по участку' value={query} onChange={(e) => setQuery(e.target.value)} type="text" />
+                        <Send style={{ color: 'var(--secondary-color)', cursor: 'pointer'}} onClick={sendEdit} />
+
+                    </div>
                     <div dangerouslySetInnerHTML={{ __html: selectedHtml }}></div>
                 </div>
             )}

@@ -41,7 +41,7 @@ export const Change = ({ className, type, element, onClick }: ChangeProps) => {
         }
         setDeleted(true)
     }
-    if (deleted) return null
+    if (deleted || element.tagName == 'STYLE') return null
     return (
         <div onClick={onClick} className={classNames(cls.Change, className, cls[type])}>
             <div className={cls.info}>

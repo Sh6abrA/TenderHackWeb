@@ -20,7 +20,7 @@ export const DiffHistory = ({ className, elements, addedClass, documentViewerRef
  
     return (
         <div className={cls.DiffHistory}>
-            <div className={cls.title}>{`Всего изменений: ${elements.length}`}</div>
+            <div className={cls.title}>{`Изменения`}</div>
             <div className={cls.container}>
                 {elements.map(element => 
                 <Change 

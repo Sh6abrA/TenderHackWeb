@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/diff": "^5.2.2",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^22.5.4",
