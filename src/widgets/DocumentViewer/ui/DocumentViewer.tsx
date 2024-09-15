@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as cls from './DocumentViewer.module.scss';
 import React, { FormEvent, forwardRef, RefObject, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import current from 'shared/assets/pdf/current.docx';
 import Send from 'shared/assets/icons/send.svg';
 export enum DocumentType {
@@ -33,6 +33,8 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
     const [query, setQuery] = useState("");
     const [range, setRange] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
     const mods: Record<string, boolean> = {
         [cls[type]]: true
@@ -48,17 +50,22 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
     useEffect(() => {
         const fetchDocx = async () => {
             try {
-                setSearchParams({
-                    currentId: '9e0337d7-60cf-4f2f-adf5-30088f2517dc',
-                    previousId: '2fa1d236-27f5-47c7-be3e-be199f702b01',
-                    documentName: 'current.docx',
-                    userId: '12345'
-                });
 
-                let response = await fetch("https://ada3e274-df6e-4a1b-baf6-4d7c15a24e2c.selstorage.ru/2fa1d236-27f5-47c7-be3e-be199f702b01.html");
-                let text = await response.text();
-                setPreviousState(text);
-                response = await fetch("https://ada3e274-df6e-4a1b-baf6-4d7c15a24e2c.selstorage.ru/9e0337d7-60cf-4f2f-adf5-30088f2517dc.html");
+                let response;
+                let text;
+               
+                if (searchParams.get('previousId') === "None") {
+
+                    response = await fetch(searchParams.get('currentId'));
+                    text = await response.text();
+                    setPreviousState(text);
+                } else {
+                    response = await fetch(searchParams.get('previousId'));
+                    text = await response.text();
+                    setPreviousState(text);
+                }
+
+                response = await fetch(searchParams.get('currentId'));
                 text = await response.text();
                 setCurrentState(text);
             } catch (e) {
@@ -98,7 +105,8 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
             console.log(send.innerHTML)
             const formData = new FormData();
             formData.append('version_file', send.innerHTML);
-            await axios.post(`http://192.168.48.68:65386/new-version?user_id=${12345}&document_name=${"24000014.docx"}`, formData)
+            const res = await axios.post(`http://pomelk1n-dev.su:8300/new-version?user_id=${searchParams.get('userId')}&document_name=${searchParams.get('documentName')}`, formData)
+            if (res.status === 202) navigate('/info');
             setHtmlContent(ref.current.innerHTML);
         }
         catch (e) { console.log(e) }
@@ -147,38 +155,46 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
     };
 
     const sendEdit = async () => {
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        if (range) {
-            selection.addRange(range);
+        setIsLoading(true);
+        try {
+            if (isLoading) return;
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            if (range) {
+                selection.addRange(range);
+            }
+            if (selection.rangeCount === 0) return; // Убедитесь, что выделение есть
+            const currentUrl = searchParams.get('currentId').split('/').pop();
+            const newRange = selection.getRangeAt(0);
+            const response = await axios.post("http://pomelk1n-dev.su:8100/edit", { document_name: currentUrl, span: selectedHtml, query });
+            const returnedHtml = response.data.html;
+
+            // Создаем временные div для содержимого
+            const tempDiv1 = document.createElement('div');
+            tempDiv1.innerHTML = selectedHtml;  // Текущий выделенный HTML
+
+            const tempDiv2 = document.createElement('div');
+            tempDiv2.innerHTML = returnedHtml;  // Возвращённый HTML
+            console.log(tempDiv1.textContent, tempDiv2.textContent);
+
+            const newHtmlContent = htmlContent.replace(tempDiv1.innerHTML, returnedHtml);
+            range.deleteContents();
+
+            setPreviousState(htmlContent);
+            // Вставляем текст обратно
+            const fragment = document.createRange().createContextualFragment(returnedHtml);
+            range.insertNode(fragment);
+            setCurrentState(ref.current.innerHTML);
+
+
+            // Скрываем инструмент после отправки
+            setVisible(false);
+            setSelectedHtml("");
+        } catch (e) {
+            console.log(e);
         }
-        if (selection.rangeCount === 0) return; // Убедитесь, что выделение есть
+        setIsLoading(false);
 
-        const newRange = selection.getRangeAt(0);
-        const response = await axios.post("http://10.14.144.166:8000/edit", { document_name: "e6c324f5-0021-425a-b064-e46a6cf5b74e.html", span: selectedHtml, query });
-        const returnedHtml = response.data.html;
-
-        // Создаем временные div для содержимого
-        const tempDiv1 = document.createElement('div');
-        tempDiv1.innerHTML = selectedHtml;  // Текущий выделенный HTML
-
-        const tempDiv2 = document.createElement('div');
-        tempDiv2.innerHTML = returnedHtml;  // Возвращённый HTML
-        console.log(tempDiv1.textContent, tempDiv2.textContent);
-
-        const newHtmlContent = htmlContent.replace(tempDiv1.innerHTML, returnedHtml);
-        range.deleteContents();
-
-        setPreviousState(htmlContent);
-        // Вставляем текст обратно
-        const fragment = document.createRange().createContextualFragment(returnedHtml);
-        range.insertNode(fragment);
-        setCurrentState(ref.current.innerHTML);
-
-
-        // Скрываем инструмент после отправки
-        setVisible(false);
-        setSelectedHtml("");
     };
 
     useEffect(() => {
@@ -187,7 +203,7 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
+    if (!htmlContent) return null;
     return (
         <div className={classNames(cls.DocumentViewer, mods, className)}>
             <div
@@ -226,7 +242,7 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
                 >
                     <div className={cls.sender}>
                         <input placeholder='Введите свой запрос по участку' value={query} onChange={(e) => setQuery(e.target.value)} type="text" />
-                        <Send style={{ color: 'var(--secondary-color)', cursor: 'pointer'}} onClick={sendEdit} />
+                        <Send style={{ color: 'var(--secondary-color)', cursor: 'pointer' }} onClick={sendEdit} />
 
                     </div>
                     <div dangerouslySetInnerHTML={{ __html: selectedHtml }}></div>
