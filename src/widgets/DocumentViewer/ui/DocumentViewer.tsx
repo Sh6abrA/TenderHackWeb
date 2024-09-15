@@ -191,6 +191,8 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
             setVisible(false);
             setSelectedHtml("");
         } catch (e) {
+            setVisible(false);
+            setSelectedHtml("");
             console.log(e);
         }
         setIsLoading(false);
