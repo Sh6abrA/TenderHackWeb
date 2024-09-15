@@ -120,10 +120,10 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
 
         const tempDiv2 = document.createElement('div');
         tempDiv2.innerHTML = returnedHtml;  // Возвращённый HTML
-
-        // Заменяем выделенный текст на полученный HTML
-        newRange.deleteContents();  // Удаляем текущее выделение
-        newRange.insertNode(tempDiv2);  // Вставляем новый HTML узел
+        console.log(tempDiv1.textContent, tempDiv2.textContent);
+        
+        const newHtmlContent = htmlContent.replace(tempDiv1.textContent, returnedHtml);
+        setHtmlContent(newHtmlContent);
 
         // Скрываем инструмент после отправки
         setVisible(false);
