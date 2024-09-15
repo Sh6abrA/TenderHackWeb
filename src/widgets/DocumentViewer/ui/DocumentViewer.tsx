@@ -130,12 +130,12 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
             if (text === '') return;
             setSelectedHtml(text);
 
-            // Вырезаем выделенный текст
-            range.deleteContents();
+            // // Вырезаем выделенный текст
+            // range.deleteContents();
 
-            // Вставляем текст обратно
-            const fragment = document.createRange().createContextualFragment(text);
-            range.insertNode(fragment);
+            // // Вставляем текст обратно
+            // const fragment = document.createRange().createContextualFragment(text);
+            // range.insertNode(fragment);
 
             const rect = range.getBoundingClientRect();
             setPosition({
@@ -234,7 +234,7 @@ export const DocumentViewer = forwardRef((props: DocumentViewerProps, ref: RefOb
                     ref={containerRef}
                     style={{
                         position: 'absolute',
-                        top: position.top,
+                        top: position.top - 100,
                         left: position.left,
                         padding: '10px',
                         zIndex: 1000,
