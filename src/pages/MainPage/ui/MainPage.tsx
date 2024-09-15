@@ -17,7 +17,6 @@ export const MainPage = ({ className }: MainPageProps) => {
     const [highlightedHTML, setHighlightedHTML] = useState("");
     const [elements, setElements] = useState([]);
     const documentViewerRef = useRef<HTMLDivElement>();
-    const dd = new DiffDOM();
     useEffect(() => {
 
         if (currentHtml && previousHTML) {
@@ -44,10 +43,10 @@ export const MainPage = ({ className }: MainPageProps) => {
             const previousDom = new DOMParser().parseFromString(previousHTML, 'text/html');
 
             const skipSelf = (node: Node): boolean => {
-                if (node.nodeName === 'TABLE') {
+                if (node.nodeName === 'TABLE' || node.textContent === '&nbsp;' || node.textContent === '') {
                     const tableElement = node as HTMLTableElement;
                 }
-                return node.nodeName === 'TABLE'; // Пропускаем узлы, которые являются <table>
+                return node.nodeName === 'TABLE' || node.textContent.length === 0; // Пропускаем узлы, которые являются <table>
             };
             const diffNode = visualDomDiff(currentDom, previousDom, { skipModified: true, addedClass: cls.vdd_added, removedClass: cls.vdd_removed, skipSelf });
 
@@ -57,6 +56,19 @@ export const MainPage = ({ className }: MainPageProps) => {
 
             newHtml = newHtml.replace("<tbody>", "<table><tbody>");
             newHtml = newHtml.replace("</tbody>", "</tbody></table>");
+            const inserts = div.querySelectorAll(`.${cls.vdd_added}`)
+            const deletions = div.querySelectorAll(`.${cls.vdd_removed}`)
+            inserts.forEach(insert => {
+                const regex = /[^\s]/;
+                // @ts-ignore
+                if (!regex.test(insert.innerText) || insert.tagName == 'STYLE') insert.remove()
+            })
+
+            deletions.forEach(deletion => {
+                const regex = /[^\s]/;
+                // @ts-ignore
+                if (!regex.test(deletion.innerText) || deletions.tagName == 'STYLE') deletion.remove()
+            })
             let index = 0;
             const traverseChildren = (element: Element) => {
                 // Проходим по всем дочерним элементам
@@ -90,7 +102,7 @@ export const MainPage = ({ className }: MainPageProps) => {
         <div className={cls.MainPage}>
             <Header />
             <div className={cls.content}>
-                <DocumentViewer ref={documentViewerRef} setCurrentState={setPreviousHTML} setPreviousState={setCurrentHtml} currentState={highlightedHTML} type={DocumentType.PREVIOUS} />
+                <DocumentViewer  addedClass={cls.vdd_added} removedClass={cls.vdd_removed} ref={documentViewerRef} setCurrentState={setPreviousHTML} setPreviousState={setCurrentHtml} currentState={highlightedHTML} type={DocumentType.PREVIOUS} />
                 <DiffHistory documentViewerRef={documentViewerRef} addedClass={cls.vdd_added} elements={elements} />
             </div>
         </div>
